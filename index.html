@@ -1,157 +1,194 @@
 <!DOCTYPE html>
 <html lang="pt">
-
 <head>
 
 <meta charset="UTF-8">
-
-<title>Atlas Povos Originários</title>
+<title>Plataforma Regenerativa de Artes Originárias</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 <style>
 
 :root{
-
 --primary:#C85A3A;
 --secondary:#B8860B;
+--accent:#A0522D;
 --background:#F5F5F0;
 --border:#D4A574;
-
 }
 
 body{
-
 margin:0;
-font-family:Arial;
+font-family:Arial, Helvetica, sans-serif;
 background:var(--background);
+color:#1a1a1a;
+}
 
+/* HERO */
+
+.hero{
+padding:50px 10%;
+text-align:center;
+background:linear-gradient(#efe7de,#f5f5f0);
+}
+
+.hero h1{
+font-size:36px;
+margin-bottom:10px;
+}
+
+/* FLUXO */
+
+.flow{
+margin:10px 0 20px 0;
+display:flex;
+justify-content:center;
+align-items:center;
+gap:8px;
+font-size:14px;
+color:#555;
+}
+
+.flowItem{
+background:white;
+border:1px solid var(--border);
+padding:4px 10px;
+border-radius:20px;
+font-size:13px;
+}
+
+.arrow{
+color:#888;
+}
+
+.hero p{
+font-size:18px;
+color:#555;
+}
+
+/* BUSCA */
+
+.search{
+margin-top:20px;
+}
+
+.search input{
+padding:10px;
+width:260px;
+border-radius:6px;
+border:1px solid var(--border);
+}
+
+.search button{
+padding:10px 14px;
+border:none;
+background:var(--primary);
+color:white;
+border-radius:6px;
+margin-left:5px;
+cursor:pointer;
 }
 
 /* GRID PRINCIPAL */
 
 .layout{
-
 display:grid;
-
 grid-template-columns:260px 1fr 360px;
-
-height:100vh;
-
+height:600px;
 }
 
-/* SIDEBAR ESQUERDA */
+/* SIDEBAR */
 
 .sidebar{
-
 background:white;
-
 border-right:1px solid var(--border);
-
 padding:20px;
-
 overflow:auto;
-
 }
 
 .sidebar h3{
-
 margin-top:0;
-
 }
 
+/* FILTROS */
+
 .filter{
-
 padding:8px;
-
 border-radius:6px;
-
 cursor:pointer;
-
 margin-bottom:6px;
-
 }
 
 .filter:hover{
-
 background:#eee;
-
-}
-
-.filter.active{
-
-background:var(--primary);
-
-color:white;
-
 }
 
 /* MAPA */
 
 #map{
-
 height:100%;
-
 }
 
-/* SIDEBAR DIREITA */
+/* DETALHES */
 
 .details{
-
 background:white;
-
 border-left:1px solid var(--border);
-
 padding:20px;
-
 overflow:auto;
-
 }
 
 .details img{
-
 width:100%;
-
 border-radius:8px;
-
 margin-bottom:10px;
-
 }
 
 .label{
-
 font-weight:bold;
-
 margin-top:10px;
-
 }
 
-/* MOBILE */
+/* FOOTER */
+
+footer{
+padding:30px;
+background:white;
+border-top:1px solid var(--border);
+text-align:center;
+}
+
+.supporters{
+margin-top:10px;
+font-weight:bold;
+}
+
+/* WHATSAPP */
+
+.whatsapp{
+position:fixed;
+right:20px;
+bottom:20px;
+background:#25D366;
+color:white;
+padding:12px 16px;
+border-radius:30px;
+text-decoration:none;
+font-weight:bold;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* RESPONSIVO */
 
 @media(max-width:1000px){
 
 .layout{
-
 grid-template-columns:1fr;
-
+height:400px;
 }
 
-.sidebar{
-
-position:absolute;
-
-z-index:1000;
-
-width:260px;
-
-height:100%;
-
-}
-
-.details{
-
+.sidebar,.details{
 display:none;
-
 }
 
 }
@@ -162,195 +199,174 @@ display:none;
 
 <body>
 
-<div class="layout">
 
-<!-- FILTROS -->
+<!-- HERO -->
+
+<section class="hero">
+
+<h1>Plataforma Regenerativa de Artes Originárias</h1>
+
+<div class="flow">
+
+<span class="flowItem">1️⃣ Curadoria</span>
+<span class="arrow">→</span>
+
+<span class="flowItem">2️⃣ Matchmaker</span>
+<span class="arrow">→</span>
+
+<span class="flowItem">3️⃣ Transação Direta</span>
+
+</div>
+
+<p>
+Conectamos artesãos, aldeias e coletivos com compradores conscientes.
+</p>
+
+<div class="search">
+<input placeholder="Buscar artesão, território ou arte">
+<button>Buscar</button>
+</div>
+
+</section>
+
+
+<!-- MAPA + EXPLORADOR -->
+
+<div class="layout">
 
 <div class="sidebar">
 
 <h3>Biorregiões</h3>
-
 <div id="regions"></div>
 
 <h3 style="margin-top:20px">Categorias</h3>
-
 <div id="categories"></div>
 
 </div>
 
-
-
-<!-- MAPA -->
-
 <div id="map"></div>
-
-
-
-<!-- DETALHES -->
 
 <div class="details">
 
 <h3>Item selecionado</h3>
 
 <div id="itemDetails">
-
 Clique em um pino no mapa
-
 </div>
 
 </div>
 
 </div>
 
+
+<!-- FOOTER -->
+
+<footer>
+
+<div>
+Matchmaker cultural sob consulta pela plataforma
+</div>
+
+<div class="supporters">
+Apoiadores: ARPJ • Coletivo 2dM • Pindorama Tech
+</div>
+
+</footer>
+
+
+<!-- WHATSAPP -->
+
+<a class="whatsapp"
+href="https://wa.me/5511999999999?text=Olá, quero saber sobre o matchmaker de artes originárias">
+WhatsApp
+</a>
 
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
 
-/* ========================
-PRODUTOS
-======================== */
+/* PRODUTOS / PARCERIAS */
 
 const products=[
 
 {
-
-id:"mesa-karuara",
-
 name:"Mesas Karuara",
-
 origin:"Amaturá – AM",
-
 region:"Amazônia",
-
 category:"Marcenaria",
-
-technique:"Madeira reaproveitada",
-
-description:"Conjunto inspirado nos Karuara",
-
+description:"Projeto cultural com madeira reaproveitada",
 image:"https://picsum.photos/400/300?1",
-
 lat:-3.3,
-
 lng:-64.7
-
 },
 
 {
-
-id:"cachimbo-kariri",
-
-name:"Cachimbo Kariri Xocó",
-
-origin:"Kariri Xocó – AL",
-
-region:"Nordeste",
-
-category:"Artesanato Tradicional",
-
-technique:"Produção manual",
-
-description:"Produção tradicional do povo Kariri",
-
-image:"https://picsum.photos/400/300?2",
-
-lat:-10.2,
-
-lng:-36.7
-
-},
-
-{
-
-id:"colar-tikuna",
-
 name:"Colares Tikuna",
-
 origin:"Tikuna – AM",
-
 region:"Amazônia",
-
 category:"Biojoias",
-
-technique:"Sementes naturais",
-
-description:"Produzido com sementes sagradas",
-
-image:"https://picsum.photos/400/300?3",
-
+description:"Produção com sementes naturais",
+image:"https://picsum.photos/400/300?2",
 lat:-3.8,
-
 lng:-70.2
+},
 
+{
+name:"Cacau Agroflorestal",
+origin:"Uruará – PA",
+region:"Amazônia",
+category:"Alimentos Artesanais",
+description:"Produção regenerativa em agrofloresta",
+image:"https://picsum.photos/400/300?3",
+lat:-3.7,
+lng:-53.7
+},
+
+{
+name:"Rede ARPT",
+origin:"Paraná",
+region:"Sul",
+category:"Rede",
+description:"Parceria cultural com ARPT",
+image:"https://picsum.photos/400/300?4",
+lat:-25.4,
+lng:-49.2,
+link:"https://arpt.site/"
 }
 
 ]
 
-
-
-const regions=[
-
-"Todos",
-
-"Amazônia",
-
-"Nordeste"
-
-]
-
-
+const regions=["Todos","Amazônia","Sul"]
 
 const categories=[
-
 "Todos",
-
 "Marcenaria",
-
-"Artesanato Tradicional",
-
-"Biojoias"
-
+"Biojoias",
+"Alimentos Artesanais",
+"Rede"
 ]
 
+/* MAPA */
 
-
-/* ========================
-MAPA
-======================== */
-
-const map=L.map('map').setView([-10,-55],4)
+const map=L.map('map').setView([-12,-55],4)
 
 L.tileLayer(
-
 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-
 ).addTo(map)
 
-
-
 let markers=[]
-
-
 
 function renderMarkers(list){
 
 markers.forEach(m=>map.removeLayer(m))
-
 markers=[]
-
-
 
 list.forEach(p=>{
 
 const marker=L.marker([p.lat,p.lng]).addTo(map)
 
-
-
 marker.on("click",()=>showDetails(p))
-
-
 
 markers.push(marker)
 
@@ -358,15 +374,10 @@ markers.push(marker)
 
 }
 
-
-
 renderMarkers(products)
 
 
-
-/* ========================
-DETALHES
-======================== */
+/* DETALHES */
 
 function showDetails(p){
 
@@ -385,51 +396,35 @@ ${p.origin}
 <div class="label">Categoria</div>
 ${p.category}
 
-<div class="label">Técnica</div>
-${p.technique}
-
 <div class="label">Descrição</div>
 ${p.description}
+
+${p.link ? `<div class="label">Site</div>
+<a href="${p.link}" target="_blank">${p.link}</a>`:""}
 
 `
 
 }
 
 
-
-/* ========================
-FILTROS
-======================== */
+/* FILTROS */
 
 let regionFilter="Todos"
-
 let categoryFilter="Todos"
-
-
 
 function applyFilters(){
 
 let list=products
 
-
-
 if(regionFilter!=="Todos")
-
 list=list.filter(p=>p.region===regionFilter)
 
-
-
 if(categoryFilter!=="Todos")
-
 list=list.filter(p=>p.category===categoryFilter)
-
-
 
 renderMarkers(list)
 
 }
-
-
 
 /* REGIÕES */
 
@@ -440,13 +435,11 @@ regions.forEach(r=>{
 const el=document.createElement("div")
 
 el.className="filter"
-
 el.innerText=r
 
 el.onclick=()=>{
 
 regionFilter=r
-
 applyFilters()
 
 }
@@ -454,8 +447,6 @@ applyFilters()
 regionBox.appendChild(el)
 
 })
-
-
 
 /* CATEGORIAS */
 
@@ -466,13 +457,11 @@ categories.forEach(c=>{
 const el=document.createElement("div")
 
 el.className="filter"
-
 el.innerText=c
 
 el.onclick=()=>{
 
 categoryFilter=c
-
 applyFilters()
 
 }
@@ -481,10 +470,7 @@ catBox.appendChild(el)
 
 })
 
-
-
 </script>
 
 </body>
-
 </html>
