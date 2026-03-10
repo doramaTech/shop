@@ -1,159 +1,157 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
 
 <meta charset="UTF-8">
-<title>Ateliê Povos Originários</title>
+
+<title>Atlas Povos Originários</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 <style>
 
 :root{
+
 --primary:#C85A3A;
 --secondary:#B8860B;
---accent:#A0522D;
 --background:#F5F5F0;
---card:#ffffff;
 --border:#D4A574;
+
 }
 
 body{
+
 margin:0;
 font-family:Arial;
 background:var(--background);
-color:#1A1A1A;
+
 }
 
-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:14px 30px;
-border-bottom:1px solid var(--border);
-background:white;
-}
+/* GRID PRINCIPAL */
 
-.logo{
-display:flex;
-align-items:center;
-gap:10px;
-}
+.layout{
 
-.logo-box{
-width:36px;
-height:36px;
-background:var(--primary);
-color:white;
-display:flex;
-align-items:center;
-justify-content:center;
-border-radius:6px;
-font-weight:bold;
-}
-
-.hero{
-padding:70px 8%;
-background:linear-gradient(#efe6dc,#f5f5f0);
-}
-
-.hero button{
-background:var(--primary);
-color:white;
-border:none;
-padding:12px 20px;
-border-radius:6px;
-cursor:pointer;
-margin-top:20px;
-}
-
-.filters{
-padding:20px 8%;
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-}
-
-.filter-btn{
-padding:8px 14px;
-border:1px solid var(--border);
-border-radius:6px;
-cursor:pointer;
-background:white;
-}
-
-.filter-btn.active{
-background:var(--primary);
-color:white;
-}
-
-.main{
 display:grid;
-grid-template-columns:260px 1fr 320px;
-height:600px;
+
+grid-template-columns:260px 1fr 360px;
+
+height:100vh;
+
 }
+
+/* SIDEBAR ESQUERDA */
 
 .sidebar{
+
 background:white;
+
 border-right:1px solid var(--border);
+
 padding:20px;
+
 overflow:auto;
+
 }
 
-.rightbar{
-background:white;
-border-left:1px solid var(--border);
-padding:20px;
-overflow:auto;
+.sidebar h3{
+
+margin-top:0;
+
 }
+
+.filter{
+
+padding:8px;
+
+border-radius:6px;
+
+cursor:pointer;
+
+margin-bottom:6px;
+
+}
+
+.filter:hover{
+
+background:#eee;
+
+}
+
+.filter.active{
+
+background:var(--primary);
+
+color:white;
+
+}
+
+/* MAPA */
 
 #map{
+
 height:100%;
+
 }
 
-.products{
-padding:40px 8%;
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
-}
+/* SIDEBAR DIREITA */
 
-.card{
+.details{
+
 background:white;
-border-radius:10px;
-overflow:hidden;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
+
+border-left:1px solid var(--border);
+
+padding:20px;
+
+overflow:auto;
+
 }
 
-.card img{
+.details img{
+
 width:100%;
-height:180px;
-object-fit:cover;
+
+border-radius:8px;
+
+margin-bottom:10px;
+
 }
 
-.card-body{
-padding:15px;
-}
+.label{
 
-.price{
-color:var(--primary);
 font-weight:bold;
+
 margin-top:10px;
+
 }
 
-@media(max-width:1100px){
+/* MOBILE */
 
-.main{
+@media(max-width:1000px){
+
+.layout{
+
 grid-template-columns:1fr;
-height:400px;
+
 }
 
 .sidebar{
-display:none;
+
+position:absolute;
+
+z-index:1000;
+
+width:260px;
+
+height:100%;
+
 }
 
-.rightbar{
+.details{
+
 display:none;
+
 }
 
 }
@@ -164,73 +162,45 @@ display:none;
 
 <body>
 
-<header>
+<div class="layout">
 
-<div class="logo">
-
-<div class="logo-box">A</div>
-
-<div>
-<strong>Ateliê</strong><br>
-<small>Povos Originários</small>
-</div>
-
-</div>
-
-<nav>
-Início | Produtos | Sobre
-</nav>
-
-</header>
-
-
-<section class="hero">
-
-<h1>Ateliê de Artesanatos</h1>
-
-<p>
-Celebrando a riqueza cultural e artística dos povos originários brasileiros.
-</p>
-
-<button onclick="scrollToProducts()">Explorar Catálogo</button>
-
-</section>
-
-
-<div class="filters" id="filters"></div>
-
-
-<!-- MAPA + SIDE BARS -->
-
-<div class="main">
+<!-- FILTROS -->
 
 <div class="sidebar">
 
-<h3>Categorias</h3>
+<h3>Biorregiões</h3>
+
+<div id="regions"></div>
+
+<h3 style="margin-top:20px">Categorias</h3>
 
 <div id="categories"></div>
 
 </div>
 
+
+
+<!-- MAPA -->
+
 <div id="map"></div>
 
-<div class="rightbar">
 
-<h3>Produtos do Coletivo</h3>
 
-<div id="collectiveProducts">
+<!-- DETALHES -->
+
+<div class="details">
+
+<h3>Item selecionado</h3>
+
+<div id="itemDetails">
+
 Clique em um pino no mapa
-</div>
 
 </div>
 
 </div>
 
-
-
-<!-- GRID PRODUTOS -->
-
-<section id="products" class="products"></section>
+</div>
 
 
 
@@ -238,191 +208,283 @@ Clique em um pino no mapa
 
 <script>
 
+/* ========================
+PRODUTOS
+======================== */
 
-const products = [
+const products=[
 
 {
-id:"mesa",
+
+id:"mesa-karuara",
+
 name:"Mesas Karuara",
-category:"Marcenaria",
+
 origin:"Amaturá – AM",
-price:0,
-image:"https://picsum.photos/400/200?1",
+
+region:"Amazônia",
+
+category:"Marcenaria",
+
+technique:"Madeira reaproveitada",
+
+description:"Conjunto inspirado nos Karuara",
+
+image:"https://picsum.photos/400/300?1",
+
 lat:-3.3,
+
 lng:-64.7
+
 },
 
 {
-id:"cachimbo",
+
+id:"cachimbo-kariri",
+
 name:"Cachimbo Kariri Xocó",
-category:"Artesanato Tradicional",
+
 origin:"Kariri Xocó – AL",
-price:0,
-image:"https://picsum.photos/400/200?2",
+
+region:"Nordeste",
+
+category:"Artesanato Tradicional",
+
+technique:"Produção manual",
+
+description:"Produção tradicional do povo Kariri",
+
+image:"https://picsum.photos/400/300?2",
+
 lat:-10.2,
+
 lng:-36.7
+
 },
 
 {
-id:"colar",
+
+id:"colar-tikuna",
+
 name:"Colares Tikuna",
-category:"Biojoias",
-origin:"Tikuna – AM",
-price:0,
-image:"https://picsum.photos/400/200?3",
-lat:-3.8,
-lng:-70.2
-},
 
-{
-id:"cacau",
-name:"Cacau Warabú",
-category:"Alimentos Artesanais",
-origin:"Uruará – PA",
-price:0,
-image:"https://picsum.photos/400/200?4",
-lat:-3.7,
-lng:-53.7
+origin:"Tikuna – AM",
+
+region:"Amazônia",
+
+category:"Biojoias",
+
+technique:"Sementes naturais",
+
+description:"Produzido com sementes sagradas",
+
+image:"https://picsum.photos/400/300?3",
+
+lat:-3.8,
+
+lng:-70.2
+
 }
 
 ]
 
 
-const categories=[
+
+const regions=[
+
 "Todos",
-"Marcenaria",
-"Artesanato Tradicional",
-"Biojoias",
-"Alimentos Artesanais"
+
+"Amazônia",
+
+"Nordeste"
+
 ]
 
 
-/* MAPA */
+
+const categories=[
+
+"Todos",
+
+"Marcenaria",
+
+"Artesanato Tradicional",
+
+"Biojoias"
+
+]
+
+
+
+/* ========================
+MAPA
+======================== */
 
 const map=L.map('map').setView([-10,-55],4)
 
 L.tileLayer(
+
 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+
 ).addTo(map)
 
-products.forEach(p=>{
+
+
+let markers=[]
+
+
+
+function renderMarkers(list){
+
+markers.forEach(m=>map.removeLayer(m))
+
+markers=[]
+
+
+
+list.forEach(p=>{
 
 const marker=L.marker([p.lat,p.lng]).addTo(map)
 
-marker.on("click",()=>showCollective(p.origin))
+
+
+marker.on("click",()=>showDetails(p))
+
+
+
+markers.push(marker)
 
 })
 
+}
 
-/* PRODUTOS GRID */
 
-const grid=document.getElementById("products")
 
-function renderProducts(list){
+renderMarkers(products)
 
-grid.innerHTML=""
 
-list.forEach(p=>{
 
-grid.innerHTML+=`
+/* ========================
+DETALHES
+======================== */
 
-<div class="card">
+function showDetails(p){
+
+const box=document.getElementById("itemDetails")
+
+box.innerHTML=`
 
 <img src="${p.image}">
 
-<div class="card-body">
+<div class="label">Nome</div>
+${p.name}
 
-<strong>${p.name}</strong>
+<div class="label">Origem</div>
+${p.origin}
 
-<p>${p.origin}</p>
+<div class="label">Categoria</div>
+${p.category}
 
-<div class="price">R$ ${p.price}</div>
+<div class="label">Técnica</div>
+${p.technique}
 
-</div>
-
-</div>
-
-`
-
-})
-
-}
-
-renderProducts(products)
-
-
-
-/* FILTROS */
-
-const filterBox=document.getElementById("filters")
-
-categories.forEach(cat=>{
-
-const btn=document.createElement("div")
-
-btn.className="filter-btn"
-
-btn.textContent=cat
-
-btn.onclick=()=>{
-
-document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"))
-btn.classList.add("active")
-
-if(cat==="Todos"){
-renderProducts(products)
-}else{
-renderProducts(products.filter(p=>p.category===cat))
-}
-
-}
-
-filterBox.appendChild(btn)
-
-})
-
-
-
-/* COLETIVOS */
-
-function showCollective(origin){
-
-const box=document.getElementById("collectiveProducts")
-
-const list=products.filter(p=>p.origin===origin)
-
-box.innerHTML=""
-
-list.forEach(p=>{
-
-box.innerHTML+=`
-
-<div style="margin-bottom:15px">
-
-<strong>${p.name}</strong>
-
-<p style="font-size:12px">${p.origin}</p>
-
-</div>
+<div class="label">Descrição</div>
+${p.description}
 
 `
 
+}
+
+
+
+/* ========================
+FILTROS
+======================== */
+
+let regionFilter="Todos"
+
+let categoryFilter="Todos"
+
+
+
+function applyFilters(){
+
+let list=products
+
+
+
+if(regionFilter!=="Todos")
+
+list=list.filter(p=>p.region===regionFilter)
+
+
+
+if(categoryFilter!=="Todos")
+
+list=list.filter(p=>p.category===categoryFilter)
+
+
+
+renderMarkers(list)
+
+}
+
+
+
+/* REGIÕES */
+
+const regionBox=document.getElementById("regions")
+
+regions.forEach(r=>{
+
+const el=document.createElement("div")
+
+el.className="filter"
+
+el.innerText=r
+
+el.onclick=()=>{
+
+regionFilter=r
+
+applyFilters()
+
+}
+
+regionBox.appendChild(el)
+
 })
 
+
+
+/* CATEGORIAS */
+
+const catBox=document.getElementById("categories")
+
+categories.forEach(c=>{
+
+const el=document.createElement("div")
+
+el.className="filter"
+
+el.innerText=c
+
+el.onclick=()=>{
+
+categoryFilter=c
+
+applyFilters()
+
 }
 
+catBox.appendChild(el)
+
+})
 
 
-/* SCROLL */
-
-function scrollToProducts(){
-
-document.getElementById("products")
-.scrollIntoView({behavior:"smooth"})
-
-}
 
 </script>
 
 </body>
+
 </html>
