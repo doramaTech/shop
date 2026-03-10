@@ -7,8 +7,6 @@
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
-<script src="https://cdn.tailwindcss.com"></script>
-
 <style>
 
 :root{
@@ -16,31 +14,161 @@
 --secondary:#B8860B;
 --accent:#A0522D;
 --background:#F5F5F0;
+--card:#ffffff;
+--border:#D4A574;
 }
 
 body{
+margin:0;
+font-family:Arial;
 background:var(--background);
+color:#1A1A1A;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:14px 30px;
+border-bottom:1px solid var(--border);
+background:white;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.logo-box{
+width:36px;
+height:36px;
+background:var(--primary);
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:6px;
+font-weight:bold;
+}
+
+.hero{
+padding:70px 8%;
+background:linear-gradient(#efe6dc,#f5f5f0);
+}
+
+.hero button{
+background:var(--primary);
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:6px;
+cursor:pointer;
+margin-top:20px;
+}
+
+.filters{
+padding:20px 8%;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.filter-btn{
+padding:8px 14px;
+border:1px solid var(--border);
+border-radius:6px;
+cursor:pointer;
+background:white;
+}
+
+.filter-btn.active{
+background:var(--primary);
+color:white;
+}
+
+.main{
+display:grid;
+grid-template-columns:260px 1fr 320px;
+height:600px;
+}
+
+.sidebar{
+background:white;
+border-right:1px solid var(--border);
+padding:20px;
+overflow:auto;
+}
+
+.rightbar{
+background:white;
+border-left:1px solid var(--border);
+padding:20px;
+overflow:auto;
 }
 
 #map{
 height:100%;
 }
 
+.products{
+padding:40px 8%;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+
+.card{
+background:white;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.card img{
+width:100%;
+height:180px;
+object-fit:cover;
+}
+
+.card-body{
+padding:15px;
+}
+
+.price{
+color:var(--primary);
+font-weight:bold;
+margin-top:10px;
+}
+
+@media(max-width:1100px){
+
+.main{
+grid-template-columns:1fr;
+height:400px;
+}
+
+.sidebar{
+display:none;
+}
+
+.rightbar{
+display:none;
+}
+
+}
+
 </style>
 
 </head>
 
-<body class="h-screen flex flex-col">
+<body>
 
-<!-- HEADER -->
+<header>
 
-<header class="flex justify-between items-center p-4 border-b bg-white">
+<div class="logo">
 
-<div class="flex items-center gap-3">
-
-<div class="w-8 h-8 rounded bg-[color:var(--primary)] text-white flex items-center justify-center font-bold">
-A
-</div>
+<div class="logo-box">A</div>
 
 <div>
 <strong>Ateliê</strong><br>
@@ -49,56 +177,60 @@ A
 
 </div>
 
-<nav class="hidden md:flex gap-6">
-
-<a>Início</a>
-<a>Produtos</a>
-<a>Sobre</a>
-
+<nav>
+Início | Produtos | Sobre
 </nav>
 
 </header>
 
 
-<!-- MAIN -->
+<section class="hero">
 
-<div class="flex flex-1 overflow-hidden">
+<h1>Ateliê de Artesanatos</h1>
 
-<!-- SIDEBAR ESQUERDA -->
+<p>
+Celebrando a riqueza cultural e artística dos povos originários brasileiros.
+</p>
 
-<aside id="leftPanel"
-class="w-64 bg-white border-r p-4 overflow-auto hidden lg:block">
+<button onclick="scrollToProducts()">Explorar Catálogo</button>
 
-<h3 class="font-bold mb-3">Categorias</h3>
+</section>
+
+
+<div class="filters" id="filters"></div>
+
+
+<!-- MAPA + SIDE BARS -->
+
+<div class="main">
+
+<div class="sidebar">
+
+<h3>Categorias</h3>
 
 <div id="categories"></div>
 
-</aside>
-
-
-<!-- MAPA -->
-
-<div class="flex-1 relative">
+</div>
 
 <div id="map"></div>
 
+<div class="rightbar">
+
+<h3>Produtos do Coletivo</h3>
+
+<div id="collectiveProducts">
+Clique em um pino no mapa
+</div>
+
+</div>
+
 </div>
 
 
-<!-- SIDEBAR DIREITA -->
 
-<aside id="rightPanel"
-class="w-80 bg-white border-l p-4 overflow-auto hidden lg:block">
+<!-- GRID PRODUTOS -->
 
-<h3 class="font-bold mb-3">
-Produtos do Coletivo
-</h3>
-
-<div id="products"></div>
-
-</aside>
-
-</div>
+<section id="products" class="products"></section>
 
 
 
@@ -107,203 +239,188 @@ Produtos do Coletivo
 <script>
 
 
-/* =========================
-PRODUTOS
-========================= */
-
 const products = [
 
 {
-id:"mesa-karuara-001",
+id:"mesa",
 name:"Mesas Karuara",
 category:"Marcenaria",
-origin:"Comunidade Amaturá – AM",
-technique:"Marcenaria sustentável",
+origin:"Amaturá – AM",
 price:0,
+image:"https://picsum.photos/400/200?1",
 lat:-3.3,
 lng:-64.7
 },
 
 {
-id:"cachimbo-kariri-001",
+id:"cachimbo",
 name:"Cachimbo Kariri Xocó",
 category:"Artesanato Tradicional",
 origin:"Kariri Xocó – AL",
-technique:"Produção manual",
 price:0,
+image:"https://picsum.photos/400/200?2",
 lat:-10.2,
 lng:-36.7
 },
 
 {
-id:"colares-tikuna-001",
+id:"colar",
 name:"Colares Tikuna",
 category:"Biojoias",
 origin:"Tikuna – AM",
-technique:"Sementes naturais",
 price:0,
+image:"https://picsum.photos/400/200?3",
 lat:-3.8,
 lng:-70.2
 },
 
 {
-id:"cacau-warabu-001",
+id:"cacau",
 name:"Cacau Warabú",
 category:"Alimentos Artesanais",
 origin:"Uruará – PA",
-technique:"Cacau artesanal",
 price:0,
+image:"https://picsum.photos/400/200?4",
 lat:-3.7,
 lng:-53.7
-},
-
-{
-id:"tambor-xama-001",
-name:"Tambor Xamã",
-category:"Instrumentos Tradicionais",
-origin:"Projeto Social",
-technique:"Bambu artesanal",
-price:0,
-lat:-23.5,
-lng:-46.6
 }
 
 ]
 
-const categories = [
 
+const categories=[
 "Todos",
 "Marcenaria",
 "Artesanato Tradicional",
 "Biojoias",
-"Alimentos Artesanais",
-"Instrumentos Tradicionais"
-
+"Alimentos Artesanais"
 ]
 
 
+/* MAPA */
 
-/* =========================
-CATEGORIAS
-========================= */
-
-const categoryContainer =
-document.getElementById("categories")
-
-categories.forEach(cat=>{
-
-const btn = document.createElement("div")
-
-btn.textContent = cat
-
-btn.className =
-"p-2 mb-2 rounded cursor-pointer hover:bg-gray-100"
-
-btn.onclick = ()=>filterCategory(cat)
-
-categoryContainer.appendChild(btn)
-
-})
-
-
-/* =========================
-MAPA
-========================= */
-
-const map = L.map('map').setView([-10,-55],4)
+const map=L.map('map').setView([-10,-55],4)
 
 L.tileLayer(
 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 ).addTo(map)
 
+products.forEach(p=>{
 
-let markers=[]
+const marker=L.marker([p.lat,p.lng]).addTo(map)
 
-function loadMarkers(list){
-
-markers.forEach(m=>map.removeLayer(m))
-
-markers=[]
-
-list.forEach(p=>{
-
-const marker = L.marker([p.lat,p.lng]).addTo(map)
-
-marker.on("click",()=>showProducts(p.origin))
-
-markers.push(marker)
+marker.on("click",()=>showCollective(p.origin))
 
 })
 
-}
 
-loadMarkers(products)
+/* PRODUTOS GRID */
 
+const grid=document.getElementById("products")
 
+function renderProducts(list){
 
-/* =========================
-FILTRO
-========================= */
-
-function filterCategory(cat){
-
-if(cat==="Todos"){
-
-loadMarkers(products)
-
-return
-
-}
-
-const filtered =
-products.filter(p=>p.category===cat)
-
-loadMarkers(filtered)
-
-}
-
-
-
-/* =========================
-PRODUTOS DO COLETIVO
-========================= */
-
-function showProducts(origin){
-
-const panel =
-document.getElementById("products")
-
-panel.innerHTML=""
-
-const list =
-products.filter(p=>p.origin===origin)
+grid.innerHTML=""
 
 list.forEach(p=>{
 
-const card=document.createElement("div")
+grid.innerHTML+=`
 
-card.className=
-"border p-3 rounded mb-3"
+<div class="card">
 
-card.innerHTML=`
+<img src="${p.image}">
+
+<div class="card-body">
 
 <strong>${p.name}</strong>
 
-<p class="text-sm mt-1">${p.origin}</p>
+<p>${p.origin}</p>
 
-<p class="text-xs text-gray-500">
-${p.technique}
-</p>
+<div class="price">R$ ${p.price}</div>
+
+</div>
+
+</div>
 
 `
 
-panel.appendChild(card)
+})
+
+}
+
+renderProducts(products)
+
+
+
+/* FILTROS */
+
+const filterBox=document.getElementById("filters")
+
+categories.forEach(cat=>{
+
+const btn=document.createElement("div")
+
+btn.className="filter-btn"
+
+btn.textContent=cat
+
+btn.onclick=()=>{
+
+document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"))
+btn.classList.add("active")
+
+if(cat==="Todos"){
+renderProducts(products)
+}else{
+renderProducts(products.filter(p=>p.category===cat))
+}
+
+}
+
+filterBox.appendChild(btn)
+
+})
+
+
+
+/* COLETIVOS */
+
+function showCollective(origin){
+
+const box=document.getElementById("collectiveProducts")
+
+const list=products.filter(p=>p.origin===origin)
+
+box.innerHTML=""
+
+list.forEach(p=>{
+
+box.innerHTML+=`
+
+<div style="margin-bottom:15px">
+
+<strong>${p.name}</strong>
+
+<p style="font-size:12px">${p.origin}</p>
+
+</div>
+
+`
 
 })
 
 }
 
 
+
+/* SCROLL */
+
+function scrollToProducts(){
+
+document.getElementById("products")
+.scrollIntoView({behavior:"smooth"})
+
+}
 
 </script>
 
